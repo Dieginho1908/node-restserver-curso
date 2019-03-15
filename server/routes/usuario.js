@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const _ = require('underscore');
 
 const Usuario = require('../models/usuario');
+const { verificaToken, verificaAdmin_Role } = require('../middelwares/autenticacion');
 
 
 const app = express();
@@ -18,7 +19,9 @@ const app = express();
 
     //------------- GET ----------------
   
-    app.get('/usuario', function (req, res) {
+    app.get('/usuario', verificaToken/*middleware*/,  (req, res) => {
+
+        
 
         let desde = req.query.desde || 0;
         desde = Number(desde);
@@ -52,7 +55,7 @@ const app = express();
 
     //------------- POST ---------------
   
-    app.post('/usuario', function (req, res) {
+    app.post('/usuario', [verificaToken, verificaAdmin_Role],  (req, res) => {
   
       let body = req.body;
 
@@ -84,7 +87,7 @@ const app = express();
 
 
     //-------------- PUT -----------------------
-    app.put('/usuario/:id', function (req, res) {
+    app.put('/usuario/:id', [verificaToken, verificaAdmin_Role],  (req, res) => {
 
     let validos = ['nombre',
                     'email',
@@ -120,7 +123,7 @@ const app = express();
 
     //---------------- Delete --------------------------
   
-    app.delete('/usuario/:id', function (req, res) {
+    app.delete('/usuario/:id', [verificaToken, verificaAdmin_Role], (req, res) => {
 
       let id = req.params.id;
 
